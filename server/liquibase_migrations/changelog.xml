@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="postgres">
+        <createTable tableName="wallets">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="postgres">
+        <addColumn tableName="wallets">
+            <column name="wallet_uuid" type="int(36)"/>
+        </addColumn>
+        <addColumn tableName="wallets">
+            <column name="balance" type="int(16)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="3" author="postgres">
+        <dropColumn tableName="wallets">
+            <column name="name"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="4" author="postgres">
+        <dropColumn tableName="wallets">
+            <column name="wallet_uuid"/>
+        </dropColumn>
+        <addColumn tableName="wallets">
+            <column name="wallet_uuid" type="varchar(36)"/>
+        </addColumn>
+    </changeSet>
+
+
+</databaseChangeLog>
