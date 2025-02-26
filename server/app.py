@@ -51,7 +51,8 @@ async def get_wallet(WALLET_UUID: str):
         )
 
 #Пополнение-вывод с кошелька по uuid
-@app.post("/api/v1/wallets/{WALLET_UUID}/operation", status_code=200)
+@app.post("/api/v1/wallets/{WALLET_UUID}/operation",
+          response_model=WalletSchema, status_code=200)
 async def operation(WALLET_UUID: str, amount: int, operationType: str):
     async with async_session() as session:
         wallet = await session.execute(
