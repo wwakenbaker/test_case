@@ -10,33 +10,8 @@
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(255)"/>
+            <column name="wallet_uuid" type="varchar(36)"/>
+            <column name="balance" type="int(16)"/>
         </createTable>
     </changeSet>
-
-    <changeSet id="2" author="postgres">
-        <addColumn tableName="wallets">
-            <column name="wallet_uuid" type="int(36)"/>
-        </addColumn>
-        <addColumn tableName="wallets">
-            <column name="balance" type="int(16)"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="3" author="postgres">
-        <dropColumn tableName="wallets">
-            <column name="name"/>
-        </dropColumn>
-    </changeSet>
-
-    <changeSet id="4" author="postgres">
-        <dropColumn tableName="wallets">
-            <column name="wallet_uuid"/>
-        </dropColumn>
-        <addColumn tableName="wallets">
-            <column name="wallet_uuid" type="varchar(36)"/>
-        </addColumn>
-    </changeSet>
-
-
 </databaseChangeLog>

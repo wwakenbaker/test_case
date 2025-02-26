@@ -1,39 +1,19 @@
-import asyncio
-
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from sqlalchemy import select
-from pyliquibase import Pyliquibase
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from server.models import Base, Wallet
-from server.schemas import WalletSchema
+from models import Wallet
+from schemas import WalletSchema
 
 app = FastAPI()
 
-DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres"
+DATABASE_URL = "postgresql+asyncpg://postgres:postgres@postgres_container:5432/postgres"
 engine = create_async_engine(DATABASE_URL, echo=True)
 
 async_session = async_sessionmaker(
     bind=engine, class_=AsyncSession, expire_on_commit=False
 )
-
-
-async def create_test_wallets():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
-        liquibase = Pyliquibase(
-            defaultsFile="liquibase_migrations/liquibase.properties"
-        )
-        liquibase.update()
-
-    async with async_session() as session:
-        async with session.begin():
-            session.add(Wallet(id=1, wallet_uuid="test", balance=10000))
-            session.add(Wallet(id=2, wallet_uuid="test2", balance=5000))
-        return await session.commit()
-
 
 @app.get("/")
 async def main():
@@ -50,7 +30,11 @@ async def get_wallet(WALLET_UUID: str):
         if balance is None:
             return JSONResponse({"error": "Wallet not found"}, status_code=404)
         return JSONResponse(
-            {"message": "Successful.", "balance": balance, "wallet_uuid": WALLET_UUID}
+            {
+            "message": "Successful.",
+            "balance": balance,
+            "wallet_uuid": WALLET_UUID
+        }
         )
 
 
@@ -83,7 +67,5 @@ async def operation(WALLET_UUID: str, amount: int, operationType: str):
 
 
 if __name__ == "__main__":
-    asyncio.run(create_test_wallets())
     import uvicorn
-
     uvicorn.run("app:app", host="127.0.0.1", port=8000)
