@@ -2,7 +2,7 @@ import asyncio
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from sqlalchemy import select, NullPool
+from sqlalchemy import select
 from pyliquibase import Pyliquibase
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
