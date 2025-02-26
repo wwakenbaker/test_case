@@ -17,6 +17,6 @@ RUN pip install "cython<3.0.0" wheel && pip install "pyyaml==5.4.1" --no-build-i
 
 RUN pip install -r requirements.txt
 
-EXPOSE 5000
+EXPOSE 80
 
-CMD ["gunicorn", "app:app", "--workers 4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:5000","--log-level=error"]
+ENTRYPOINT ["./start.sh"]

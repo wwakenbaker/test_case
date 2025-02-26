@@ -10,8 +10,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
-    command: >
-      - python init_db.py
     networks:
       - monitoring
     depends_on:

@@ -6,20 +6,33 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from models import Wallet
 from schemas import WalletSchema
 
+# Создание приложения
 app = FastAPI()
 
+#Создание движка и коннекта
 DATABASE_URL = "postgresql+asyncpg://postgres:postgres@postgres_container:5432/postgres"
 engine = create_async_engine(DATABASE_URL, echo=True)
 
+
+# Запуск движка и создание сессии
 async_session = async_sessionmaker(
     bind=engine, class_=AsyncSession, expire_on_commit=False
 )
 
+# Создание тестовых кошельков
+async def add_test_wallets():
+    async with async_session() as session:
+        async with session.begin():
+            session.add(Wallet(id=1, wallet_uuid="test", balance=10000))
+            session.add(Wallet(id=2, wallet_uuid="test2", balance=5000))
+        return await session.commit()
+
+#Заглушка
 @app.get("/")
 async def main():
     return "main"
 
-
+#Проверка баланса по uuid
 @app.get("/api/v1/wallets/{WALLET_UUID}", response_model=WalletSchema, status_code=200)
 async def get_wallet(WALLET_UUID: str):
     async with async_session() as session:
@@ -37,7 +50,7 @@ async def get_wallet(WALLET_UUID: str):
         }
         )
 
-
+#Пополнение-вывод с кошелька по uuid
 @app.post("/api/v1/wallets/{WALLET_UUID}/operation", status_code=200)
 async def operation(WALLET_UUID: str, amount: int, operationType: str):
     async with async_session() as session:
@@ -67,5 +80,7 @@ async def operation(WALLET_UUID: str, amount: int, operationType: str):
 
 
 if __name__ == "__main__":
+    import asyncio
     import uvicorn
+    asyncio.run(add_test_wallets())
     uvicorn.run("app:app", host="127.0.0.1", port=8000)
