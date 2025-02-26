@@ -20,6 +20,8 @@ async def create_test_wallets():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
+        liquibase = Pyliquibase(defaultsFile="liquibase_migrations/liquibase.properties")
+        liquibase.update()
 
     async with async_session() as session:
         async with session.begin():
@@ -67,8 +69,5 @@ async def operation(WALLET_UUID: str, amount: int, operationType: str):
 
 if __name__ == "__main__":
     asyncio.run(create_test_wallets())
-    liquibase = Pyliquibase(defaultsFile="liquibase_migrations/liquibase.properties")
-    liquibase.update()
-    #liquibase.validate()
     import uvicorn
     uvicorn.run("app:app", host="127.0.0.1", port=8000)
